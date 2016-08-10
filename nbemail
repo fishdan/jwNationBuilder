@@ -1,0 +1,83 @@
+// ==UserScript==
+// @name         NBEmail
+// @namespace    http://tampermonkey.net/
+// @version      0.3
+// @description  Insert 'Dear '+ firstname into email fields
+// @author       Dan Fishman
+// @match        https://johnsonweld2016.nationbuilder.com/admin/signups/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    var topOfPage='Maine Volunteer';
+    var emailable=false;//default do not send globally
+    var searcher=setInterval(waitForActivity,1000);
+    function waitForActivity(){
+        clearInterval(searcher);
+        var activityLog=document.getElementsByClassName('activity');
+        if(!activityLog || activityLog.length===0){
+            searcher=setInterval(waitForActivity,1000);
+        }
+        else{
+            if(checkSendEmail()){
+            //do nothing
+            }
+            else{
+                var nextButton=document.getElementsByClassName('next-page')[0];
+                nextButton.click();
+                //alert(nextButton.length);
+            }
+        }
+    }
+        
+    function checkSendEmail(){    
+        'use strict';
+        var myName='Daniel Fishman';
+        var myEmail='garyjohnsonmaine@gmail.com,danfishman@johnsonweld.com';
+        var mySubject='Gary Johnson coming to Maine!';
+        //javascript escape your text here: http://www.howtocreate.co.uk/tutorials/jsexamples/syntax/prepareInline.html
+        var myMessage = 'My name is Dan Fishman and I am the New England Regional Director for Gary Johnson. \n\nThanks for signing up to help the Johnson campaign! I\'m writing for two reasons. First to tell you that Gary is coming to Maine in the next 3 weeks. The date is not written in stone yet, but our best guess is 8\/26. \n\nI\'m also writing because I\'m looking for some volunteers with computer skills. I want to give you access to Nation Builder and have you become the point person for about 20 volunteers. I can give you the basic training on Nation Builder, and then we\'ll take that into traininging on our phone bank and door knocking software. \n\nIt may sound a bit daunting, but honestly it\'s very simple to use. \n\nAnd the campaign desperately needs help like this in Maine. If you think you\'ve got 2+ hours a week to give to the campaign, you can really help us make a difference. \n\nAnd if you think you\'d like to put in more time than that, we have other positions available. I\'m looking to make someone our event coordinator in Maine. I need a State Director who has significant managerial experience. \n\nVolunteers who step up will get the chance to meet Gary when he\'s in either Lewiston or Portland. \n\nIf you can help out at ALL please email our Volunteer Coordinator Greg Sundik directly at \n\ngaryjohnsonmaine@gmail.com \n\nThanks! \n\nDan ';    var emailable=false;
+        var myDiv=document.getElementById('signup_note_nav');
+        var children = myDiv.childNodes;   
+        for (var i = 0; i < children.length; i++) {
+            // access to individual element:
+            var elem = children[i];
+            if(elem.innerHTML && elem.innerHTML == 'Email'){
+                console.log(elem.innerHTML);
+                emailable=true;
+            }
+        }
+        //if our subject is on the page, we emailed them already
+        if(window.find(mySubject)){
+            emailable=false;
+            window.find(topOfPage);
+            $(document).scrollTop(0);
+            return false;
+        }
+        //if the user has opted out of email contacts their email address is in a strike tag
+        if(document.getElementsByTagName("STRIKE").length>0) return false;    
+        if(emailable){
+            var mySpan=document.getElementsByClassName('signup-name')[0];
+            var nas=mySpan.innerText;
+            var firstName=nas.split(' ')[0];
+            var textArea= document.getElementById('email_body_text');
+            var style = window.getComputedStyle(textArea);
+            var myCC=document.getElementById('email_cc');
+            myCC.value=myEmail;
+            var subjectField=document.getElementById('email_subject');
+            subjectField.value=mySubject;
+            textArea.value='Dear '+firstName+",\n\n";        
+            textArea.value+=myMessage;
+            //if(confirm('Send Email?')){
+                document.forms['new_email'].submit();
+            return true;
+            //}           
+        }   
+    }
+    
+})();
+
+/**
+written by Dan Fishman for the Johnson/Weld 2016 campaign, 
+Licensed under CreativeCommons Attribution 4.0 International
+**/
