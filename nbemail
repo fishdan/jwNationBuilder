@@ -2,14 +2,14 @@
 // @name         NBEmail
 // @namespace    http://tampermonkey.net/
 // @version      0.3
-// @description  Insert 'Dear '+ firstname into email fields
+// @description  Insert 'Dear '+ firstname into email fields, a body of text, email and advance through a filter
 // @author       Dan Fishman
 // @match        https://johnsonweld2016.nationbuilder.com/admin/signups/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
-    var topOfPage='Maine Volunteer';
+    var topOfPage='New Jersey Volunteer';//irrelevant unless you want to jump back to the top
     var emailable=false;//default do not send globally
     var searcher=setInterval(waitForActivity,1000);
     function waitForActivity(){
@@ -29,16 +29,15 @@
             }
         }
     }
-        
-    function checkSendEmail(){    
+
+    function checkSendEmail(){
         'use strict';
-        var myName='Daniel Fishman';
-        var myEmail='garyjohnsonmaine@gmail.com,danfishman@johnsonweld.com';
-        var mySubject='Gary Johnson coming to Maine!';
+        var myName='Dan Fishman';
+        var myEmail='danfishman@johnsonweld.com';
+        var mySubject='Can Gary Johnson save the GOP';
         //javascript escape your text here: http://www.howtocreate.co.uk/tutorials/jsexamples/syntax/prepareInline.html
-        var myMessage = 'My name is Dan Fishman and I am the New England Regional Director for Gary Johnson. \n\nThanks for signing up to help the Johnson campaign! I\'m writing for two reasons. First to tell you that Gary is coming to Maine in the next 3 weeks. The date is not written in stone yet, but our best guess is 8\/26. \n\nI\'m also writing because I\'m looking for some volunteers with computer skills. I want to give you access to Nation Builder and have you become the point person for about 20 volunteers. I can give you the basic training on Nation Builder, and then we\'ll take that into traininging on our phone bank and door knocking software. \n\nIt may sound a bit daunting, but honestly it\'s very simple to use. \n\nAnd the campaign desperately needs help like this in Maine. If you think you\'ve got 2+ hours a week to give to the campaign, you can really help us make a difference. \n\nAnd if you think you\'d like to put in more time than that, we have other positions available. I\'m looking to make someone our event coordinator in Maine. I need a State Director who has significant managerial experience. \n\nVolunteers who step up will get the chance to meet Gary when he\'s in either Lewiston or Portland. \n\nIf you can help out at ALL please email our Volunteer Coordinator Greg Sundik directly at \n\ngaryjohnsonmaine@gmail.com \n\nThanks! \n\nDan ';    var emailable=false;
-        var myDiv=document.getElementById('signup_note_nav');
-        var children = myDiv.childNodes;   
+        var myMessage = '#GOP4Gary\nToday is a moment of reckoning for Grand Old Party (GOP) republicans. A truly sad moment, because everything they have ever known and loved in politics has forever been tarnished. I say GOP republicans, because the Republican Party has officially been hijacked by a man so clearly unfit and so unqualified that even the most loyal of party members have have no choice but to renounce him.\nThe very possibility that this failure of a man — a man who exemplifies everything wrong with those that abuse power — is going to be given the keys to the kingdom has reached beyond reckoning. It is time for a clean break.';        var myDiv=document.getElementById('signup_note_nav');
+        var children = myDiv.childNodes;
         for (var i = 0; i < children.length; i++) {
             // access to individual element:
             var elem = children[i];
@@ -55,7 +54,7 @@
             return false;
         }
         //if the user has opted out of email contacts their email address is in a strike tag
-        if(document.getElementsByTagName("STRIKE").length>0) return false;    
+        if(document.getElementsByTagName("STRIKE").length>0) return false;
         if(emailable){
             var mySpan=document.getElementsByClassName('signup-name')[0];
             var nas=mySpan.innerText;
@@ -65,14 +64,15 @@
             var myCC=document.getElementById('email_cc');
             myCC.value=myEmail;
             var subjectField=document.getElementById('email_subject');
-            subjectField.value=mySubject;
-            textArea.value='Dear '+firstName+",\n\n";        
+            subjectField.value=firstName+":"+mySubject;
+            textArea.value='Dear '+firstName+",\n\n";
             textArea.value+=myMessage;
-            //if(confirm('Send Email?')){
+            if(confirm('Send Email?')){
                 document.forms['new_email'].submit();
+            }
             return true;
-            //}           
-        }   
+            //}
+        }
     }
     
 })();
