@@ -8,6 +8,8 @@
 // @grant        none
 // ==/UserScript==
 
+
+
 (function() {
     var topOfPage='New Jersey Volunteer';//irrelevant unless you want to jump back to the top
     var emailable=false;//default do not send globally
@@ -80,4 +82,5 @@
 /**
 written by Dan Fishman for the Johnson/Weld 2016 campaign, 
 Licensed under CreativeCommons Attribution 4.0 International
+To use first install TamperMonkey into your browser, then install this script
 **/
